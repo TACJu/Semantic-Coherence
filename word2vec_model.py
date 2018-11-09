@@ -3,15 +3,15 @@ from gensim.models import word2vec
 
 
 def train():
-    sentence = word2vec.LineSentence('./data/train_sentence.txt')
+    sentence = word2vec.LineSentence('./data/sentence/train_sentence.txt')
     model = word2vec.Word2Vec(sentences = sentence, min_count = 3)
     model.save('./model/word2vec.model')
 
-def inference():
+def inference(phase):
     model = word2vec.Word2Vec.load('./model/word2vec.model')
-    file = open('./data/train_sentence.txt', 'r')
-    vec_sum = []
-    vec_mean = []
+    filename = './data/sentence/' + phase + '_sentence.txt'
+    file = open(filename, 'r')
+    vec = []
     
     while True:
         line = file.readline()
@@ -25,15 +25,14 @@ def inference():
             if word in model.wv:
                 count += 1
                 tmp += model.wv[word]
-        vec_sum.append(tmp)
-        vec_mean.append(tmp / count)
+        vec.append(tmp / count)
 
-    vec_sum = np.array(vec_sum)
-    vec_mean = np.array(vec_mean)    
+    vec = np.array(vec)    
     file.close()
-    np.save('./data/vec_sum.npy', vec_sum)
-    np.save('./data/vec_mean.npy', vec_mean)
+    savename = './data/embedding vector/' + phase + '_vec.npy'
+    np.save(savename, vec)
 
 if __name__ == "__main__":
     # train()
-    inference()
+    for phase in ['train', 'test', 'valid']:
+        inference(phase)
