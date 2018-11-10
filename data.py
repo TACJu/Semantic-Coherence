@@ -1,22 +1,25 @@
 import os
 import re
+import numpy as np
 
 pattern = re.compile('(.*)"text": "(.*)"(.*)')
 
 def prepare_data(phase):
-    filename = './data/' + phase + '_data'
-    sentence_outname = './data/' + phase + '_sentence.txt'
-    label_outname = './data/' + phase + '_label.txt'
+    filename = './data/raw_data/' + phase + '_data'
+    sentence_outname = './data/sentence/' + phase + '_sentence.txt'
+    if phase != 'test':
+        label_outname = './data/label/' + phase + '_label.npy'
+        label_out = []
     file = open(filename, 'r')
     sentence_out = open(sentence_outname, 'w')
-    label_out = open(label_outname, 'w')
     
     while True:
         line = file.readline()
         if not line:
             break
         
-        label_out.write(line[11] + '\n')
+        if phase != 'test':
+            label_out.append(int(line[11]))
         match = re.match(pattern, line)
         if match:
             words = match[2].split()
@@ -30,7 +33,9 @@ def prepare_data(phase):
     
     file.close()
     sentence_out.close()
-    label_out.close()
+    if phase != 'test':
+        label_out = np.array(label_out)
+        np.save(label_outname, label_out)
 
 def extract():
     stringtoint = {}
@@ -64,9 +69,8 @@ def extract():
 
 
 if __name__ == '__main__':
-    '''
+    
     for phase in ['train', 'test', 'valid']:
         prepare_data(phase)
-    '''
-
-    extract()
+    
+    # extract()
