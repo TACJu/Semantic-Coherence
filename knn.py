@@ -3,7 +3,7 @@ import numpy as np
 def l1_distance(vec_a, vec_b):
     return np.sum(vec_a - vec_b)
 
-def l1abs_distance(vec_a, vec_b):
+def l1_abs_distance(vec_a, vec_b):
     return np.sum(np.abs(vec_a - vec_b))
 
 def l2_distance(vec_a, vec_b):
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     # compute_distance()
 
     val_pred = np.zeros(val_len)
-    dist = np.load('./data/matrix/val_train_l1abs_matrix.npy')
+    dist = np.load('./data/matrix/val_train_l1_matrix.npy')
     dist = np.abs(dist)
     k_list = [1, 3, 5, 7, 9]
 
