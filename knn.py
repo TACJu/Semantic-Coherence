@@ -24,8 +24,8 @@ def compute_distance(lena, lenb):
         if i % 100 == 0:
             print("i: " + str(i))
         for j in range(lenb):
-            dis_matrix[i][j] = l1_distance(val_vec[i], train_vec[j])
-    np.save('./data/matrix/val_train_l1_matrix.npy', dis_matrix)
+            dis_matrix[i][j] = l2_distance(val_vec[i], train_vec[j])
+    np.save('./data/matrix/val_train_l2_matrix.npy', dis_matrix)
 
 def inference(k_list):
     
@@ -66,10 +66,10 @@ if __name__ == "__main__":
     train_len = len(train_label)
     val_len = len(val_label)
 
-    # compute_distance()
+    compute_distance(val_len, train_len)
 
     val_pred = np.zeros(val_len)
-    dist = np.load('./data/matrix/val_train_l1_matrix.npy')
+    dist = np.load('./data/matrix/val_train_l2_matrix.npy')
     dist = np.abs(dist)
     k_list = [1, 3, 5, 7, 9]
 

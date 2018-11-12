@@ -14,3 +14,4 @@ All code is in [knn.py](./knn.py). I'm going to test different distance function
 |---|---|---|---|---|---|---|
 |acc|l1 distance|50.43%|50.44%|50.05%|50.50%|49.94%|
 |acc|l1_abs distance|51.21%|52.43%|52.53%|53.33%|53.53%|
+|acc|l2 distance|52.19%|52.69%|52.48%|52.96%|53.81%|
