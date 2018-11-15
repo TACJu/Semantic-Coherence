@@ -13,7 +13,7 @@ I provide the raw data and all my code in this repo.
 All code is in [knn.py](./knn.py). I try the different distance functions which bring improvement in performance while I also train different Word2Vec models(window length) which seems not work.
 
 |window length|distance function\k|1|3|5|7|9|
-|:---:|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|---|
 |5|l1 distance|50.43%|50.44%|50.05%|50.50%|49.94%|
 |5|l1_abs distance|51.21%|52.43%|52.53%|53.33%|53.53%|
 |5|l2 distance|52.19%|52.69%|52.48%|52.96%|53.81%|
