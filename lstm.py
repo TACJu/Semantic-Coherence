@@ -40,7 +40,7 @@ class LossHistory(keras.callbacks.Callback):
         plt.xlabel(loss_type)
         plt.ylabel('acc-loss')
         plt.legend(loc="upper right")
-        plt.savefig('./lstm_train.png')
+        plt.savefig('./pictures/lstm_train.png')
 
 def build_model(embedding_matrix):
     

@@ -44,7 +44,7 @@ class LossHistory(keras.callbacks.Callback):
         plt.xlabel(loss_type)
         plt.ylabel('acc-loss')
         plt.legend(loc="upper right")
-        plt.savefig('./han_train.png')
+        plt.savefig('./pictures/han_train.png')
 
 def dot_product(x, kernel):
     if K.backend() == 'tensorflow':

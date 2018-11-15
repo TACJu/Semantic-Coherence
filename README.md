@@ -2,7 +2,7 @@
 
 This project aims to judge whether a context is coherent in meaning or not. As far as I know, it's quite a challenging task.
 
-The raw data is in the format of text, I first use [data.py](./data.py) to extract useful information and store them in numpy or txt format. After that, gensim package is used to deploy Word2Vec method on the words extracted before and get the embedding vectors which are also stored in npy files.
+The raw data is in the format of text, I first use [data.py](./data.py) to extract useful information and store them in numpy or txt format. After that, gensim package is used to deploy Word2Vec method on the words extracted before and get the embedding vectors which are also stored in npy files in [word2vec_model.py](./word2vec_model.py)
 
 Below are methods I have tried and their performance. Notice that for deep learning methods since I don't have enough time for adjusting parameters, so the performance is limitted and can be improved obviously. 
 
@@ -35,27 +35,27 @@ For the SVM method, I just simply used the SVM package in sklearn to do that. Co
 For deep learning methods, I first try the naive LSTM model, code is in [lstm.py](./lstm.py). It works quite well which can get 63.83% accuracy. But it's clear that the overfitting situation is very severe, so you can choose to add l2 regularizer to the net.
 
 ### Net Structure
-![lstm.png](./lstm.png)
+![lstm.png](./pictures/lstm.png)
 
 ### acc-loss Graph
-![lstm_train.png](./lstm_train.png)
+![lstm_train.png](./pictures/lstm_train.png)
 
 ## TextCNN
 
 This method is based on paper [Convolutional Neural Networks for Sentence Classification](https://arxiv.org/abs/1408.5882), code is in [cnn.py](./cnn.py) It shows a imporvement on this task and reaches 65.27% accuracy. Overfitting also exsits here.
 
 ### Net Structure
-![cnn.png](./cnn.png)
+![cnn.png](./pictures/cnn.png)
 
 ### acc-loss Graph
-![cnn_train.png](cnn_train.png)
+![cnn_train.png](./pictures/cnn_train.png)
 
 ## Hierarchical Attention Network
 
 This method is based on paper [Hierarchical Attention Networks for Document Classification](https://www.cs.cmu.edu/~diyiy/docs/naacl16.pdf), code is in [han.py](./han.py) It uses Attention to focus on important things for classification and can reach 68.83% accuracy.
 
 ### Net Structure
-![han.png](./han.png)
+![han.png](./pictures/han.png)
 
 ### acc-loss Graph
-![han_train.png](./han_train.png)
+![han_train.png](./pictures/han_train.png)
