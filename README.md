@@ -32,7 +32,7 @@ For the SVM method, I just simply used the SVM package in sklearn to do that. Co
 
 ## Naive LSTM
 
-For deep learning methods, I first try the naive LSTM model, code is in [lstm.py](./lstm.py). It works quite well which can get 63.83% accuracy. But it's clear the overfitting situation is very severe, so you can choose to add l2 regularizer to the net.
+For deep learning methods, I first try the naive LSTM model, code is in [lstm.py](./lstm.py). It works quite well which can get 63.83% accuracy. But it's clear that the overfitting situation is very severe, so you can choose to add l2 regularizer to the net.
 
 ### Net Structure
 ![lstm.png](./lstm.png)
