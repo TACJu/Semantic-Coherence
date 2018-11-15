@@ -1,15 +1,50 @@
 import numpy as np
+import os
+import matplotlib.pyplot as plt
 
+import keras
 from keras import backend as K
 from keras.models import Model
 from keras import initializers
-from keras.engine.topology import Layer
-from keras.layers import Dense, Input
-from keras.layers import Embedding, GRU, Bidirectional, TimeDistributed
-from keras.preprocessing.text import Tokenizer, text_to_word_sequence
-from keras.utils.np_utils import to_categorical
-from keras.utils import plot_model
+from keras.layers import Dense, Input, Embedding, GRU, Bidirectional, TimeDistributed
 from keras import initializers,regularizers,constraints
+from keras.callbacks import TensorBoard, ModelCheckpoint
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+plt.switch_backend('agg')
+
+class LossHistory(keras.callbacks.Callback):
+    def on_train_begin(self, logs={}):
+        self.losses = {'batch': [], 'epoch': []}
+        self.accuracy = {'batch': [], 'epoch': []}
+        self.val_loss = {'batch': [], 'epoch': []}
+        self.val_acc = {'batch': [], 'epoch': []}
+
+    def on_batch_end(self, batch, logs={}):
+        self.losses['batch'].append(logs.get('loss'))
+        self.accuracy['batch'].append(logs.get('acc'))
+        self.val_loss['batch'].append(logs.get('val_loss'))
+        self.val_acc['batch'].append(logs.get('val_acc'))
+
+    def on_epoch_end(self, batch, logs={}):
+        self.losses['epoch'].append(logs.get('loss'))
+        self.accuracy['epoch'].append(logs.get('acc'))
+        self.val_loss['epoch'].append(logs.get('val_loss'))
+        self.val_acc['epoch'].append(logs.get('val_acc'))
+
+    def loss_plot(self, loss_type):
+        iters = range(len(self.losses[loss_type]))
+        plt.figure()
+        plt.plot(iters, self.accuracy[loss_type], 'r', label='train acc')
+        plt.plot(iters, self.losses[loss_type], 'g', label='train loss')
+        if loss_type == 'epoch':
+            plt.plot(iters, self.val_acc[loss_type], 'b', label='val acc')
+            plt.plot(iters, self.val_loss[loss_type], 'k', label='val loss')
+        plt.grid(True)
+        plt.xlabel(loss_type)
+        plt.ylabel('acc-loss')
+        plt.legend(loc="upper right")
+        plt.savefig('./han_train.png')
 
 def dot_product(x, kernel):
     if K.backend() == 'tensorflow':
@@ -85,38 +120,45 @@ class Attention(Layer):
     def compute_output_shape(self, input_shape):
         return input_shape[0], input_shape[-1]
 
+def build_model(embedding_matrix):
+    
+    embedding_layer = Embedding(86678, 100, weights=[embedding_matrix], input_length=1000, trainable=True, mask_zero=True)
 
-x_train = np.load('./data/word vector/train_index_fix.npy')
-y_train = np.load('./data/label/train_label.npy')
-x_val = np.load('./data/word vector/valid_index_fix.npy')
-y_val = np.load('./data/label/valid_label.npy')
-x_train = np.expand_dims(x_train, axis=1)
-x_val = np.expand_dims(x_val, axis=1)
-print(x_train[0].shape)
-print(x_train[0])
-embedding_matrix = np.load('./data/word vector/word_vector_fix.npy')
+    sentence_input = Input(shape=(1000,), dtype='int32')
+    embedded_sequences = embedding_layer(sentence_input)
+    lstm_word = Bidirectional(GRU(100, return_sequences=True))(embedded_sequences)
+    #word_dense = TimeDistributed(Dense(200))(lstm_word)
+    attn_word = Attention()(lstm_word)
+    sentenceEncoder = Model(sentence_input, attn_word)
 
-embedding_layer = Embedding(86678, 100, weights=[embedding_matrix],
-                            input_length=1000, trainable=True, mask_zero=True)
+    review_input = Input(shape=(1, 1000), dtype='int32')
+    review_encoder = TimeDistributed(sentenceEncoder)(review_input)
+    lstm_sentence = Bidirectional(GRU(100, return_sequences=True))(review_encoder)
+    #sentence_dense = TimeDistributed(Dense(200))(lstm_word)
+    attn_sentence = Attention()(lstm_sentence)
+    preds = Dense(1, activation='sigmoid')(attn_sentence)
+    model = Model(review_input, preds)
 
-sentence_input = Input(shape=(1000,), dtype='int32')
-embedded_sequences = embedding_layer(sentence_input)
-lstm_word = Bidirectional(GRU(100, return_sequences=True))(embedded_sequences)
-#word_dense = TimeDistributed(Dense(200))(lstm_word)
-attn_word = Attention()(lstm_word)
-sentenceEncoder = Model(sentence_input, attn_word)
+    model.summary()
 
-review_input = Input(shape=(1, 1000), dtype='int32')
-review_encoder = TimeDistributed(sentenceEncoder)(review_input)
-lstm_sentence = Bidirectional(GRU(100, return_sequences=True))(review_encoder)
-#sentence_dense = TimeDistributed(Dense(200))(lstm_word)
-attn_sentence = Attention()(lstm_sentence)
-preds = Dense(1, activation='sigmoid')(attn_sentence)
-model = Model(review_input, preds)
-plot_model(model, show_shapes=True, to_file='./han.png')
+if __name__ == "__main__":
 
+    history = LossHistory()
 
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
+    X_train = np.load('./data/word vector/train_index_fix.npy')
+    Y_train = np.load('./data/label/train_label.npy')
+    X_val = np.load('./data/word vector/valid_index_fix.npy')
+    Y_val = np.load('./data/label/valid_label.npy')
+    X_train = np.expand_dims(x_train, axis=1)
+    X_val = np.expand_dims(x_val, axis=1)
+    embedding_matrix = np.load('./data/word vector/word_vector_fix.npy')
 
-print("model fitting - Hierachical attention network")
-model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=10, batch_size=100)
+    model = build_model(embedding_matrix)
+
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
+    filepath='./model/adam_model/model_{epoch:02d}-{val_acc:.2f}.hdf5'
+    checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=0, save_best_only=False, save_weights_only=False, mode='auto', period=1)
+    tensorboard = TensorBoard('./adam_log/', write_graph=True)
+
+    model.fit(X_train, Y_train, validation_data=(X_val, Y_val), callbacks=[checkpoint, tensorboard, history], epochs=10, batch_size=100)
+    history.loss_plot('epoch')

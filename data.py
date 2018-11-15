@@ -73,4 +73,4 @@ if __name__ == '__main__':
     for phase in ['train', 'test', 'valid']:
         prepare_data(phase)
     
-    # extract()
+    extract()

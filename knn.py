@@ -14,9 +14,9 @@ def l2_distance(vec_a, vec_b):
     return dis ** 0.5
 
 def compute_distance(lena, lenb):
-    train_vec = np.load('./data/embedding vector/train_vec.npy')
-    test_vec = np.load('./data/embedding vector/test_vec.npy')
-    val_vec = np.load('./data/embedding vector/valid_vec.npy')
+    train_vec = np.load('./data/embedding vector/train_new_vec.npy')
+    test_vec = np.load('./data/embedding vector/test_new_vec.npy')
+    val_vec = np.load('./data/embedding vector/valid_new_vec.npy')
     
     dis_matrix = np.zeros((lena, lenb))
 
@@ -24,20 +24,21 @@ def compute_distance(lena, lenb):
         if i % 100 == 0:
             print("i: " + str(i))
         for j in range(lenb):
-            dis_matrix[i][j] = l2_distance(val_vec[i], train_vec[j])
-    np.save('./data/matrix/val_train_l2_matrix.npy', dis_matrix)
+            dis_matrix[i][j] = l1_distance(val_vec[i], train_vec[j])
+    np.save('./data/matrix/val_train_l1_matrix_new.npy', dis_matrix)
 
 def inference(k_list):
     
     global val_len, dist, val_pred, train_label, val_label
+    for i in range(val_len):
+        closest = []
+        distance = dist[i,:]
+        index = np.argsort(distance)
+
     for k in k_list:
-        for i in range(val_len):
-            closest = []
-            distance = dist[i,:]
-            index = np.argsort(distance)
-            closest_y = train_label[index[:k]]
-            count = np.bincount(closest_y)
-            val_pred[i] = np.argmax(count)
+        closest_y = train_label[index[:k]]
+        count = np.bincount(closest_y)
+        val_pred[i] = np.argmax(count)
 
         tp = 0
         fp = 0
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     compute_distance(val_len, train_len)
 
     val_pred = np.zeros(val_len)
-    dist = np.load('./data/matrix/val_train_l2_matrix.npy')
+    dist = np.load('./data/matrix/val_train_l1_matrix_new.npy')
     dist = np.abs(dist)
     k_list = [1, 3, 5, 7, 9]
 
