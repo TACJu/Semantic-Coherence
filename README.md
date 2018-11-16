@@ -1,6 +1,6 @@
 # Semantic-Coherence
 
-This project aims to judge whether a context is coherent in meaning or not. As far as I know, it's quite a challenging task.
+This project aims to judge whether a context is coherent in meaning or not. As far as I know, it's quite a challenging task. I finally get the result of 71.81% accuracy in the validation set.
 
 The raw data is in the format of text, I first use [data.py](./data.py) to extract useful information and store them in numpy or txt format. After that, gensim package is used to deploy Word2Vec method on the words extracted before and get the embedding vectors which are also stored in npy files in [word2vec_model.py](./word2vec_model.py)
 
@@ -42,7 +42,7 @@ For deep learning methods, I first try the naive LSTM model, code is in [lstm.py
 
 ## TextCNN
 
-This method is based on paper [Convolutional Neural Networks for Sentence Classification](https://arxiv.org/abs/1408.5882), code is in [cnn.py](./cnn.py) It shows a imporvement on this task and reaches 65.27% accuracy. Overfitting also exsits here.
+Then I try a simple CNN network to classify the text, code is in [cnn.py](./cnn.py) It shows a imporvement on this task and reaches 65.27% accuracy. What's more important is that it trains much faster than LSTM. Overfitting also exsits here.
 
 ### Net Structure
 ![cnn.png](./pictures/cnn.png)
@@ -52,7 +52,8 @@ This method is based on paper [Convolutional Neural Networks for Sentence Classi
 
 ## Hierarchical Attention Network
 
-This method is based on paper [Hierarchical Attention Networks for Document Classification](https://www.cs.cmu.edu/~diyiy/docs/naacl16.pdf), code is in [han.py](./han.py) It uses Attention to focus on important things for classification and can reach 68.83% accuracy.
+This method is based on paper [Hierarchical Attention Networks for Document Classification](https://www.cs.cmu.edu/~diyiy/docs/naacl16.pdf), code is in [han.py](./han.py) It uses Attention to focus on important things for classification and a single model can reach 68.83% accuracy. To further improve performance, I combine 5 models
+to inference and get 71.81% accuracy, code is in [inference.py](./inference.py)
 
 ### Net Structure
 ![han.png](./pictures/han.png)
