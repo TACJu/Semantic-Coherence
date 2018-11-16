@@ -42,7 +42,7 @@ For deep learning methods, I first try the naive LSTM model, code is in [lstm.py
 
 ## TextCNN
 
-Then I try a simple CNN network to classify the text, code is in [cnn.py](./cnn.py) It shows a imporvement on this task and reaches 65.27% accuracy. What's more important is that it trains much faster than LSTM. Overfitting also exsits here.
+Then I try a simple CNN network to classify the text, code is in [cnn.py](./cnn.py). It shows a imporvement on this task and reaches 65.27% accuracy. What's more important is that it trains much faster than LSTM. Overfitting also exsits here.
 
 ### Net Structure
 ![cnn.png](./pictures/cnn.png)
