@@ -37,40 +37,7 @@ def prepare_data(phase):
         label_out = np.array(label_out)
         np.save(label_outname, label_out)
 
-def extract():
-    stringtoint = {}
-    inttostring = {}
-    count = 0
-    outfile = open('./data/word.txt', 'w')
-    
-    for phase in ['train', 'test', 'valid']:
-        filename = './data/' + phase + '_sentence.txt'
-        file = open(filename, 'r')
-        
-        while True:
-            line = file.readline()
-            if not line:
-                break
-
-            words = line.split()
-            for word in words:
-                if word not in stringtoint.keys():
-                    stringtoint[word] = count
-                    inttostring[count] = word
-                    count += 1
-            
-        file.close()
-    
-    print(len(stringtoint))
-    for i in stringtoint:
-        outfile.write(i + '\n')
-    outfile.close()
-    
-
-
 if __name__ == '__main__':
     
     for phase in ['train', 'test', 'valid']:
         prepare_data(phase)
-    
-    extract()

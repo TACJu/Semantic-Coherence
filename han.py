@@ -124,20 +124,20 @@ def build_model(embedding_matrix):
     
     embedding_layer = Embedding(86678, 100, weights=[embedding_matrix], input_length=1000, trainable=True, mask_zero=True)
 
-    sentence_input = Input(shape=(1000,), dtype='int32')
-    embedded_sequences = embedding_layer(sentence_input)
+    word_input = Input(shape=(1000,), dtype='int32')
+    embedded_sequences = embedding_layer(word_input)
     lstm_word = Bidirectional(GRU(100, return_sequences=True))(embedded_sequences)
     #word_dense = TimeDistributed(Dense(200))(lstm_word)
     attn_word = Attention()(lstm_word)
     sentenceEncoder = Model(sentence_input, attn_word)
 
-    review_input = Input(shape=(1, 1000), dtype='int32')
-    review_encoder = TimeDistributed(sentenceEncoder)(review_input)
-    lstm_sentence = Bidirectional(GRU(100, return_sequences=True))(review_encoder)
+    sentence_input = Input(shape=(1, 1000), dtype='int32')
+    sentence_encoder = TimeDistributed(sentenceEncoder)(sentence_input)
+    lstm_sentence = Bidirectional(GRU(100, return_sequences=True))(sentence_encoder)
     #sentence_dense = TimeDistributed(Dense(200))(lstm_word)
     attn_sentence = Attention()(lstm_sentence)
-    preds = Dense(1, activation='sigmoid')(attn_sentence)
-    model = Model(review_input, preds)
+    pred = Dense(1, activation='sigmoid')(attn_sentence)
+    model = Model(sentence_input, pred)
 
     model.summary()
 
