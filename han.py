@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 
 import keras
 from keras import backend as K
-from keras.models import Model
-from keras import initializers
-from keras.layers import Dense, Input, Embedding, GRU, Bidirectional, TimeDistributed
 from keras import initializers,regularizers,constraints
+from keras.models import Model
+from keras.engine.topology import Layer
+from keras.layers import Dense, Input, Embedding, GRU, Bidirectional, TimeDistributed
 from keras.callbacks import TensorBoard, ModelCheckpoint
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
@@ -149,8 +149,8 @@ if __name__ == "__main__":
     Y_train = np.load('./data/label/train_label.npy')
     X_val = np.load('./data/word vector/valid_index_fix.npy')
     Y_val = np.load('./data/label/valid_label.npy')
-    X_train = np.expand_dims(x_train, axis=1)
-    X_val = np.expand_dims(x_val, axis=1)
+    X_train = np.expand_dims(X_train, axis=1)
+    X_val = np.expand_dims(X_val, axis=1)
     embedding_matrix = np.load('./data/word vector/word_vector_fix.npy')
 
     model = build_model(embedding_matrix)
